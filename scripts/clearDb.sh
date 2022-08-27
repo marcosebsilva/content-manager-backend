@@ -1,0 +1,1 @@
+sudo -S docker exec -it content-manager-db bash -c "mongo content-manager-db --eval 'db.dropDatabase()'"

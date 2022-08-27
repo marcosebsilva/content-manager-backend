@@ -4,7 +4,8 @@
   "description": "A CRUD application to manage posts",
   "main": "src/api/startApp.ts",
   "scripts": {
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "clearDb": "chmod +x ./scripts/clearDb.sh && ./scripts/clearDb.sh" 
   },
   "author": "dusdoom.dev@gmail.com",
   "license": "ISC",
