@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { Error } from 'mongoose';
-import BaseError from "../errors/BaseError";
 import clearValidationErrors from "../utils/clearValidationErrors";
 
 export default function (error: any, req: Request, res: Response, next: NextFunction) {
