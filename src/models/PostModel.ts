@@ -45,7 +45,7 @@ const postSchema = new Schema<IPostModel>({
     body: {type: String},
     deprecatedTimestamp: {type: Date, default: new Date()},
   }]
-}, {timestamps: { createdAt: "created" }});
+}, {timestamps: { createdAt: "created", updatedAt: false }});
 
 
 /**This hook is responsible for updating the
