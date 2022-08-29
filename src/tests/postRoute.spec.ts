@@ -7,8 +7,8 @@ import { StatusCodes } from 'http-status-codes';
 chai.use(chaiHttp);
 
 describe("Post route", () => {
-  describe("1.When using valid data", () => {
-    it("1. It is possible to create a post and returns the expected object", async() => {
+  describe("When creating a new post", () => {
+    it("It is possible to create a post valid body", async() => {
       const validPost = {
         title: "Valid title",
         body: "Valid post"
@@ -24,5 +24,5 @@ describe("Post route", () => {
         "_id",
         "body");
     });
-  })
+  });
 });
