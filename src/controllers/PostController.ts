@@ -6,7 +6,7 @@ import NotFoundError from '../errors/NotFoundError';
 import BaseCrudController from './BaseCrudController';
 import InvalidObjectIdError from '../errors/InvalidObjectIdError';
 
-class PostController implements BaseCrudController {
+class PostController extends BaseCrudController {
   /** @override */
   public static async create(req: Request, res: Response, next: NextFunction) {
     const {
