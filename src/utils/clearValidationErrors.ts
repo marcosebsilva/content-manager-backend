@@ -1,14 +1,14 @@
-import { Error } from "mongoose";
+import { Error } from 'mongoose';
 
-/**Represents simple way to read a error derivated from {@link Error.ValidatorError}
+/** Represents simple way to read a error derivated from {@link Error.ValidatorError}
 * @param key is the key property that threw the {@link Error.ValidatorError}
-* @param message is the error message explaining the error {@link Error.ValidatorError.properties["message"]}
+* @param message is the error message explaining the error {@link Error.ValidatorError}
 */
 
 type CleanValidatorError = {
   key: string,
   message: string
-}
+};
 
 /**
  * Convert the errors from a {@link Error.ValidationError}
@@ -18,10 +18,10 @@ type CleanValidatorError = {
  * @returns an array of {@link CleanValidatorError}
  */
 
-export default function(error: Error.ValidationError) {
+export default function (error: Error.ValidationError) {
   const errorMessages: CleanValidatorError[] = [];
   Object.entries(error.errors).forEach(([key, properties]) => {
-    errorMessages.push({key, message: properties.message});
+    errorMessages.push({ key, message: properties.message });
   });
   return errorMessages;
 }
