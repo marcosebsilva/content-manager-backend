@@ -10,5 +10,9 @@ export default function (error: any, req: Request, res: Response, next: NextFunc
     return;
   }
 
-  res.status(error.status).json({message: error.message});
+  try {
+    res.status(error.status).json({message: error.message});
+  } catch {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message: "A internal error occurred."});
+  }
 }
