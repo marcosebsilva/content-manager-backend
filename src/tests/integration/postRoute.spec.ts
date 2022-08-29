@@ -8,7 +8,10 @@ import { Types } from 'mongoose';
 chai.use(chaiHttp);
 
 describe("Post route", () => {
-  describe("1. When creating a new post", () => {
+  describe("1.When creating a new post", () => {
+    afterEach(async () => {
+      await PostModel.deleteMany({});
+    });
     it("it is possible to create a post with a valid request body", async() => {
       const validPost = {
         title: "Valid title",
@@ -64,15 +67,15 @@ describe("Post route", () => {
       });
     });
   });
-  describe("2. When retrieving a single post", () => {
-    it("fails if the id passed is invalid", async () => {
+  describe("2.When retrieving a single post", () => {
+    it("returns status UNPROCESSABLE_ENTITY if the id format is invalid", async () => {
       const response = await chai.request(app)
         .get('/posts/notvalidobjectid');
 
       expect(response).to.have.status(StatusCodes.UNPROCESSABLE_ENTITY);
       expect(response.body).to.be.deep.equal({message: "Invalid id format."});
     });
-    it("fails if the post passed is not found", async () => {
+    it("returns status NOT_FOUND and the expected message if id is not found", async () => {
       const validId = new Types.ObjectId().toString();
       const response = await chai.request(app)
         .get(`/posts/${validId}`);
@@ -80,7 +83,7 @@ describe("Post route", () => {
       expect(response).to.have.status(StatusCodes.NOT_FOUND);
       expect(response.body).to.be.deep.equal({message: "Post not found."});
     });
-    it("it possible to find an existing post", async () => {
+    it("returns status OK and the expected object if post is found", async () => {
       const newPost = new PostModel({
         title: "new post",
         body: "new post"
@@ -102,6 +105,91 @@ describe("Post route", () => {
       );
     });
   });
-  describe("3.When updating a post", async () => {});
-  describe("4.When deleting a post", async () => {});
+  describe("3.When updating a post", () => {
+    let newPostObjectId: string;
+    let titleInNewPostCreation: string;
+
+    before(async () => {
+      const newPost = new PostModel({
+        title: "new post",
+        body: "new post"
+      });
+
+      const { _id, title } = await newPost.save();
+      newPostObjectId = _id.toString();
+      titleInNewPostCreation = title;
+    });
+
+    after(async () => {
+      await PostModel.deleteMany({});
+    });
+
+    it("returns status UNPROCESSABLE_ENTITY if the id format is invalid", async () => {
+      const response = await chai.request(app)
+        .get('/posts/notvalidobjectid');
+
+      expect(response).to.have.status(StatusCodes.UNPROCESSABLE_ENTITY);
+      expect(response.body).to.be.deep.equal({message: "Invalid id format."});
+    });
+    it("returns status NOT_FOUND and the expected message if id is not found", async () => {
+      const validId = new Types.ObjectId().toString();
+      const response = await chai.request(app)
+        .get(`/posts/${validId}`);
+
+      expect(response).to.have.status(StatusCodes.NOT_FOUND);
+      expect(response.body).to.be.deep.equal({message: "Post not found."});
+    });
+    it("return status OK and the expected object if post is successfully updated", async () => {
+      const newTitle = "random title";
+
+      const response = await chai.request(app)
+        .patch(`/posts/${newPostObjectId}`)
+        .send({title: newTitle})
+
+      expect(response).to.have.status(StatusCodes.OK);
+      expect(response.body).to.deep.equal({
+        title: newTitle,
+        _id: newPostObjectId,
+      });
+    });
+    it("contains the previous post inside the history", async () => {
+      const response = await chai.request(app)
+        .get(`/posts/${newPostObjectId}`);
+
+      const oldTitleFromNewPost = response.body.post.history[0].title;
+      expect(oldTitleFromNewPost).to.be.deep.equal(titleInNewPostCreation);
+    });
+  });
+  describe("4.When deleting a post", async () => {
+    it("returns status UNPROCESSABLE_ENTITY if the id format is invalid", async () => {
+      const response = await chai.request(app)
+        .get('/posts/notvalidobjectid');
+
+      expect(response).to.have.status(StatusCodes.UNPROCESSABLE_ENTITY);
+      expect(response.body).to.be.deep.equal({message: "Invalid id format."});
+    });
+    it("returns status NOT_FOUND and the expected message if id is not found", async () => {
+      const validId = new Types.ObjectId().toString();
+      const response = await chai.request(app)
+        .get(`/posts/${validId}`);
+
+      expect(response).to.have.status(StatusCodes.NOT_FOUND);
+      expect(response.body).to.be.deep.equal({message: "Post not found."});
+    });
+    it("returns status OK if post is successfully deleted.", async() => {
+      const validPost = {
+        title: "Valid title",
+        body: "Valid post"
+      }
+
+      const {body: { post: { _id: createdPostId }}} = await chai.request(app)
+        .post('/posts')
+        .send(validPost);
+
+      const deletePostResponse = await chai.request(app)
+        .post(`/posts/${createdPostId}`);
+      
+      expect(deletePostResponse).to.have.status(StatusCodes.OK);
+    });
+  });
 });
