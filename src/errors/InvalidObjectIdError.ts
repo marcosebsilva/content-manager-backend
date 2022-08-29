@@ -1,7 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import BaseError from './BaseError';
+import { ObjectId } from 'mongoose';
 
-/**Throwable error used when the resource requested can't be found. */
+/**Throwable error used when path param @postId from a request is not a valid {@link ObjectId} */
 export default class InvalidObjectIdError extends BaseError {
   constructor() {
     super("InvalidObjectIdError", "Invalid id format.", StatusCodes.UNPROCESSABLE_ENTITY);
