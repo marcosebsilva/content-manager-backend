@@ -3,6 +3,7 @@ import PostModel from '../models/PostModel';
 import app from '../api/app';
 import chai, { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes';
+import { Types } from 'mongoose';
 
 chai.use(chaiHttp);
 
@@ -61,6 +62,44 @@ describe("Post route", () => {
         key: "title",
         message: "Max length allowed is 100."
       });
+    });
+  });
+  describe("2. When retrieving a single post", () => {
+    it("fails if the id passed is invalid", async () => {
+      const response = await chai.request(app)
+        .get('/posts/notvalidobjectid');
+
+      expect(response).to.have.status(StatusCodes.UNPROCESSABLE_ENTITY);
+      expect(response.body).to.be.deep.equal({message: "Invalid id format."});
+    });
+    it("fails if the post passed is not found", async () => {
+      const validId = new Types.ObjectId().toString();
+      const response = await chai.request(app)
+        .get(`/posts/${validId}`);
+
+      expect(response).to.have.status(StatusCodes.NOT_FOUND);
+      expect(response.body).to.be.deep.equal({message: "Post not found."});
+    });
+    it("it possible to find an existing post", async () => {
+      const newPost = new PostModel({
+        title: "new post",
+        body: "new post"
+      });
+
+      const { _id: newPostObjectId } = await newPost.save();
+
+      const response = await chai.request(app)
+        .get(`/posts/${newPostObjectId}`);
+
+      expect(response).to.have.status(StatusCodes.OK);
+      expect(response.body.post).to.have.all.keys(
+        "_id",
+        "body",
+        "created",
+        "history",
+        "lastUpdated",
+        "title"
+      );
     });
   });
 });
