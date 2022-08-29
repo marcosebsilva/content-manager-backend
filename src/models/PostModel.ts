@@ -15,14 +15,12 @@ interface IPostInHistory extends Omit<IPost, 'history'>{
 }
 
 export interface IPostModel extends IPost, Document {
-  created: Date
   lastUpdated: Date
 }
 
 /**
- * created/lastUpdated timestamps and versionKey(__v)
- * being set explicitly to allow the use of 'select' property 
- * from mongoose to hide them from ordinary queries.
+ * versionKey(__v) being set explicitly to allow the use of 'select' property 
+ * from mongoose to hide it from ordinary queries.
  */
 const postSchema = new Schema<IPostModel>({
   title: {
@@ -33,15 +31,9 @@ const postSchema = new Schema<IPostModel>({
   body: {
     type: String,
   },
-  created: {
-    type: Date,
-    default: Date.now(),
-    select: false,
-  },
   lastUpdated: {
     type: Date,
     default: Date.now(),
-    select: false,
   },
   __v: {
     type: Number,
@@ -53,7 +45,7 @@ const postSchema = new Schema<IPostModel>({
     body: {type: String},
     deprecatedTimestamp: {type: Date, default: new Date()},
   }]
-});
+}, {timestamps: { createdAt: "created" }});
 
 
 /**This hook is responsible for updating the
@@ -65,7 +57,10 @@ postSchema.pre('save', async function(){
   if (this.isNew) return
   if(!this.isModified()) return;
 
-  /**This makes lastUpdated key exactly equal to deprecatedTimestamp date inside history*/
+  /**
+    * Setting this explicitly allows lastUpdated key to be
+    * exactly equal to deprecatedTimestamp date inside history.
+    */
   const currentDate = new Date();
   this.lastUpdated = currentDate;
 

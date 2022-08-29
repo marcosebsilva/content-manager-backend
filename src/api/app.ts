@@ -11,7 +11,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
 /**Routes */
-app.use('/products', PostRoute);
+app.use('/posts', PostRoute);
 
 /**Check if server is up*/
 app.get('/ping', (_req, res) => res.status(StatusCodes.OK).json({message: "pong"}));
