@@ -1,4 +1,6 @@
+/* istanbul ignore file */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { Request, Response, NextFunction } from 'express';
 
 /** Base interface to define a CRUD controller, no matter the database */
