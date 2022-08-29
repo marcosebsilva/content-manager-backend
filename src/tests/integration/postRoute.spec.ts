@@ -1,6 +1,6 @@
 import chaiHttp from 'chai-http';
-import PostModel from '../models/PostModel';
-import app from '../api/app';
+import PostModel from '../../models/PostModel';
+import app from '../../api/app';
 import chai, { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes';
 import { Types } from 'mongoose';
@@ -102,4 +102,6 @@ describe("Post route", () => {
       );
     });
   });
+  describe("3.When updating a post", async () => {});
+  describe("4.When deleting a post", async () => {});
 });
