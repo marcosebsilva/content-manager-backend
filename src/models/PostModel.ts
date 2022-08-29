@@ -25,8 +25,8 @@ export interface IPostModel extends IPost, Document {
 const postSchema = new Schema<IPostModel>({
   title: {
     type: String,
-    maxlength: 100,
-    required: true
+    maxlength: [100, "Max length allowed is 100."],
+    required: [true, "Title is required."]
   },
   body: {
     type: String,
