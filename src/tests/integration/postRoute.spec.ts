@@ -182,12 +182,12 @@ describe("Post route", () => {
         body: "Valid post"
       }
 
-      const {body: { post: { _id: createdPostId }}} = await chai.request(app)
+      const {body: { _id: createdPostId }} = await chai.request(app)
         .post('/posts')
         .send(validPost);
 
       const deletePostResponse = await chai.request(app)
-        .post(`/posts/${createdPostId}`);
+        .delete(`/posts/${createdPostId}`);
       
       expect(deletePostResponse).to.have.status(StatusCodes.OK);
     });
