@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon",
     "clearDb": "chmod +x ./scripts/clearDb.sh && ./scripts/clearDb.sh",
-    "test": "mocha ./src/tests/**/**.spec.ts --exit"
+    "test": "mocha ./src/tests/**/**.spec.ts --exit",
+    "test:coverage": "nyc npm test"
   },
   "author": "dusdoom.dev@gmail.com",
   "license": "ISC",
