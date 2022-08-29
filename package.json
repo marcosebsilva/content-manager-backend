@@ -5,7 +5,8 @@
   "main": "src/api/startApp.ts",
   "scripts": {
     "dev": "nodemon",
-    "clearDb": "chmod +x ./scripts/clearDb.sh && ./scripts/clearDb.sh"
+    "clearDb": "chmod +x ./scripts/clearDb.sh && ./scripts/clearDb.sh",
+    "test": "mocha ./src/tests/**.spec.ts --exit"
   },
   "author": "dusdoom.dev@gmail.com",
   "license": "ISC",
