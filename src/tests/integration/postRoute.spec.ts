@@ -1,22 +1,22 @@
 import chaiHttp from 'chai-http';
-import PostModel from '../../models/PostModel';
-import app from '../../api/app';
 import chai, { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes';
 import { Types } from 'mongoose';
+import app from '../../api/app';
+import PostModel from '../../models/PostModel';
 
 chai.use(chaiHttp);
 
-describe("Post route", () => {
-  describe("1.When creating a new post", () => {
+describe('Post route', () => {
+  describe('1.When creating a new post', () => {
     afterEach(async () => {
       await PostModel.deleteMany({});
     });
-    it("it is possible to create a post with a valid request body", async() => {
+    it('it is possible to create a post with a valid request body', async () => {
       const validPost = {
-        title: "Valid title",
-        body: "Valid post"
-      }
+        title: 'Valid title',
+        body: 'Valid post',
+      };
 
       const response = await chai.request(app)
         .post('/posts')
@@ -24,14 +24,15 @@ describe("Post route", () => {
 
       expect(response).to.have.status(StatusCodes.CREATED);
       expect(response.body).to.have.all.keys(
-        "title",
-        "_id",
-        "body");
+        'title',
+        '_id',
+        'body',
+      );
     });
-    it("fails if the body quest is missing the title key", async() => {
+    it('fails if the body quest is missing the title key', async () => {
       const postWithoutTitle = {
-        body: "Valid post"
-      }
+        body: 'Valid post',
+      };
 
       const response = await chai.request(app)
         .post('/posts')
@@ -39,54 +40,53 @@ describe("Post route", () => {
 
       expect(response).to.have.status(StatusCodes.BAD_REQUEST);
       expect(response.body.errors).to.deep.include({
-        key: "title",
-        message: "Title is required."
+        key: 'title',
+        message: 'Title is required.',
       });
     });
-    it("fails if the body request 'title' key has more than 100 characters", async() => {
-      let bigString: string = "";
+    it("fails if the body request 'title' key has more than 100 characters", async () => {
+      let bigString: string = '';
 
-      while(bigString.length <= 100) {
-        bigString += "a";
+      while (bigString.length <= 100) {
+        bigString += 'a';
       }
 
       const postWithBigTitle = {
         title: bigString,
-        body: "valid body"
-      }
+        body: 'valid body',
+      };
 
       const response = await chai.request(app)
         .post('/posts')
         .send(postWithBigTitle);
 
-
       expect(response).to.have.status(StatusCodes.BAD_REQUEST);
       expect(response.body.errors).to.deep.include({
-        key: "title",
-        message: "Max length allowed is 100."
+        key: 'title',
+        message: 'Max length allowed is 100.',
       });
     });
   });
-  describe("2.When retrieving a single post", () => {
-    it("returns status UNPROCESSABLE_ENTITY if the id format is invalid", async () => {
+  describe('2.When retrieving a single post', () => {
+    it('returns status UNPROCESSABLE_ENTITY if the id format is invalid', async () => {
       const response = await chai.request(app)
         .get('/posts/notvalidobjectid');
 
       expect(response).to.have.status(StatusCodes.UNPROCESSABLE_ENTITY);
-      expect(response.body).to.be.deep.equal({message: "Invalid id format."});
+      expect(response.body).to.be.deep.equal({ message: 'Invalid id format.' });
     });
-    it("returns status NOT_FOUND and the expected message if id is not found", async () => {
+    it('returns status NOT_FOUND and the expected message if id is not found', async () => {
       const validId = new Types.ObjectId().toString();
       const response = await chai.request(app)
         .get(`/posts/${validId}`);
 
       expect(response).to.have.status(StatusCodes.NOT_FOUND);
-      expect(response.body).to.be.deep.equal({message: "Post not found."});
+      expect(response.body).to.be.deep.equal({ message: 'Post not found.' });
     });
-    it("returns status OK and the expected object if post is found", async () => {
+    it('returns status OK and the expected object if post is found', async () => {
       const newPost = new PostModel({
-        title: "new post",
-        body: "new post"
+        title: 'new post',
+        body: 'new post',
       });
 
       const { _id: newPostObjectId } = await newPost.save();
@@ -96,27 +96,27 @@ describe("Post route", () => {
 
       expect(response).to.have.status(StatusCodes.OK);
       expect(response.body.post).to.have.all.keys(
-        "_id",
-        "body",
-        "created",
-        "history",
-        "lastUpdated",
-        "title"
+        '_id',
+        'body',
+        'created',
+        'history',
+        'lastUpdated',
+        'title',
       );
     });
   });
-  describe("3.When updating a post", () => {
+  describe('3.When updating a post', () => {
     let newPostObjectId: string;
     let titleInNewPostCreation: string;
 
     before(async () => {
       const newPost = new PostModel({
-        title: "new post",
-        body: "new post"
+        title: 'new post',
+        body: 'new post',
       });
 
-      const { _id, title } = await newPost.save();
-      newPostObjectId = _id.toString();
+      const { _id: id, title } = await newPost.save();
+      newPostObjectId = id.toString();
       titleInNewPostCreation = title;
     });
 
@@ -124,27 +124,27 @@ describe("Post route", () => {
       await PostModel.deleteMany({});
     });
 
-    it("returns status UNPROCESSABLE_ENTITY if the id format is invalid", async () => {
+    it('returns status UNPROCESSABLE_ENTITY if the id format is invalid', async () => {
       const response = await chai.request(app)
         .get('/posts/notvalidobjectid');
 
       expect(response).to.have.status(StatusCodes.UNPROCESSABLE_ENTITY);
-      expect(response.body).to.be.deep.equal({message: "Invalid id format."});
+      expect(response.body).to.be.deep.equal({ message: 'Invalid id format.' });
     });
-    it("returns status NOT_FOUND and the expected message if id is not found", async () => {
+    it('returns status NOT_FOUND and the expected message if id is not found', async () => {
       const validId = new Types.ObjectId().toString();
       const response = await chai.request(app)
         .get(`/posts/${validId}`);
 
       expect(response).to.have.status(StatusCodes.NOT_FOUND);
-      expect(response.body).to.be.deep.equal({message: "Post not found."});
+      expect(response.body).to.be.deep.equal({ message: 'Post not found.' });
     });
-    it("return status OK and the expected object if post is successfully updated", async () => {
-      const newTitle = "random title";
+    it('return status OK and the expected object if post is successfully updated', async () => {
+      const newTitle = 'random title';
 
       const response = await chai.request(app)
         .patch(`/posts/${newPostObjectId}`)
-        .send({title: newTitle})
+        .send({ title: newTitle });
 
       expect(response).to.have.status(StatusCodes.OK);
       expect(response.body).to.deep.equal({
@@ -152,7 +152,7 @@ describe("Post route", () => {
         _id: newPostObjectId,
       });
     });
-    it("contains the previous post inside the history", async () => {
+    it('contains the previous post inside the history', async () => {
       const response = await chai.request(app)
         .get(`/posts/${newPostObjectId}`);
 
@@ -160,35 +160,35 @@ describe("Post route", () => {
       expect(oldTitleFromNewPost).to.be.deep.equal(titleInNewPostCreation);
     });
   });
-  describe("4.When deleting a post", async () => {
-    it("returns status UNPROCESSABLE_ENTITY if the id format is invalid", async () => {
+  describe('4.When deleting a post', async () => {
+    it('returns status UNPROCESSABLE_ENTITY if the id format is invalid', async () => {
       const response = await chai.request(app)
         .get('/posts/notvalidobjectid');
 
       expect(response).to.have.status(StatusCodes.UNPROCESSABLE_ENTITY);
-      expect(response.body).to.be.deep.equal({message: "Invalid id format."});
+      expect(response.body).to.be.deep.equal({ message: 'Invalid id format.' });
     });
-    it("returns status NOT_FOUND and the expected message if id is not found", async () => {
+    it('returns status NOT_FOUND and the expected message if id is not found', async () => {
       const validId = new Types.ObjectId().toString();
       const response = await chai.request(app)
         .get(`/posts/${validId}`);
 
       expect(response).to.have.status(StatusCodes.NOT_FOUND);
-      expect(response.body).to.be.deep.equal({message: "Post not found."});
+      expect(response.body).to.be.deep.equal({ message: 'Post not found.' });
     });
-    it("returns status OK if post is successfully deleted.", async() => {
+    it('returns status OK if post is successfully deleted.', async () => {
       const validPost = {
-        title: "Valid title",
-        body: "Valid post"
-      }
+        title: 'Valid title',
+        body: 'Valid post',
+      };
 
-      const {body: { _id: createdPostId }} = await chai.request(app)
+      const { body: { _id: createdPostId } } = await chai.request(app)
         .post('/posts')
         .send(validPost);
 
       const deletePostResponse = await chai.request(app)
         .delete(`/posts/${createdPostId}`);
-      
+
       expect(deletePostResponse).to.have.status(StatusCodes.OK);
     });
   });
