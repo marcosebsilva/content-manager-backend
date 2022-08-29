@@ -7,8 +7,8 @@ import { StatusCodes } from 'http-status-codes';
 chai.use(chaiHttp);
 
 describe("Post route", () => {
-  describe("When creating a new post", () => {
-    it("It is possible to create a post valid body", async() => {
+  describe("1. When creating a new post", () => {
+    it("it is possible to create a post with a valid request body", async() => {
       const validPost = {
         title: "Valid title",
         body: "Valid post"
@@ -23,6 +23,44 @@ describe("Post route", () => {
         "title",
         "_id",
         "body");
+    });
+    it("fails if the body quest is missing the title key", async() => {
+      const postWithoutTitle = {
+        body: "Valid post"
+      }
+
+      const response = await chai.request(app)
+        .post('/posts')
+        .send(postWithoutTitle);
+
+      expect(response).to.have.status(StatusCodes.BAD_REQUEST);
+      expect(response.body.errors).to.deep.include({
+        key: "title",
+        message: "Title is required."
+      });
+    });
+    it("fails if the body request 'title' key has more than 100 characters", async() => {
+      let bigString: string = "";
+
+      while(bigString.length <= 100) {
+        bigString += "a";
+      }
+
+      const postWithBigTitle = {
+        title: bigString,
+        body: "valid body"
+      }
+
+      const response = await chai.request(app)
+        .post('/posts')
+        .send(postWithBigTitle);
+
+
+      expect(response).to.have.status(StatusCodes.BAD_REQUEST);
+      expect(response.body.errors).to.deep.include({
+        key: "title",
+        message: "Max length allowed is 100."
+      });
     });
   });
 });
