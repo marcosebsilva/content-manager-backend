@@ -1,12 +1,18 @@
 import { Router } from 'express';
-import PostController from '../controllers/PostController';
+import {
+  update,
+  remove,
+  create,
+  getAll,
+  getOne,
+} from '../controllers/PostController';
 
 const router = Router();
 
-router.post('/', PostController.create);
-router.get('/', PostController.getAll);
-router.get('/:postId', PostController.getOne);
-router.patch('/:postId', PostController.update);
-router.delete('/:postId', PostController.delete);
+router.post('/', create);
+router.get('/', getAll);
+router.get('/:postId', getOne);
+router.patch('/:postId', update);
+router.delete('/:postId', remove);
 
 export default router;
