@@ -27,9 +27,12 @@ describe('Post route', () => {
         'title',
         '_id',
         'body',
+        'history',
+        'created',
+        'lastUpdated',
       );
     });
-    it('fails if the body quest is missing the title key', async () => {
+    it('fails if the body request is missing the title key', async () => {
       const postWithoutTitle = {
         body: 'Valid post',
       };
@@ -39,10 +42,7 @@ describe('Post route', () => {
         .send(postWithoutTitle);
 
       expect(response).to.have.status(StatusCodes.BAD_REQUEST);
-      expect(response.body.errors).to.deep.include({
-        key: 'title',
-        message: 'Title is required.',
-      });
+      expect(response.body).to.deep.equal({ message: 'Title is required.' });
     });
     it("fails if the body request 'title' key has more than 100 characters", async () => {
       let bigString: string = '';
@@ -61,10 +61,7 @@ describe('Post route', () => {
         .send(postWithBigTitle);
 
       expect(response).to.have.status(StatusCodes.BAD_REQUEST);
-      expect(response.body.errors).to.deep.include({
-        key: 'title',
-        message: 'Max length allowed is 100.',
-      });
+      expect(response.body).to.deep.equal({ message: 'Title max length is 100.' });
     });
   });
   describe('2.When retrieving a single post', () => {
@@ -147,7 +144,7 @@ describe('Post route', () => {
         .send({ title: newTitle });
 
       expect(response).to.have.status(StatusCodes.OK);
-      expect(response.body).to.deep.equal({
+      expect(response.body).to.deep.include({
         title: newTitle,
         _id: newPostObjectId,
       });
