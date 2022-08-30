@@ -16,6 +16,7 @@ interface IPostInHistory extends Omit<IPost, 'history'> {
 
 export interface IPostModel extends IPost, Document {
   lastUpdated: Date
+  created: Date
 }
 
 /**
