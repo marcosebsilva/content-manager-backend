@@ -1,12 +1,17 @@
-/** Abstract class used to create Errors that will be throwed inside de controllers. */
+/**
+* Abstract class used to create Errors that will be throwed inside de models.
+*/
 export default abstract class BaseError extends Error {
-  /** http status code to be sent to the client */
   public status: number;
 
+  /**
+   * @param message A text with a more detailed explanation of the error.
+   * @param name Custom name identifier for the error.
+   * @param status HTTP Status Code according to the error.
+   */
   constructor(
-    /** Custom name identifier */
-    name: string,
     message: string,
+    name: string,
     status: number,
   ) {
     super(message);
